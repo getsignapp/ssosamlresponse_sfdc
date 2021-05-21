@@ -8,20 +8,14 @@ var builder = require('xmlbuilder');
 //var DOMParser = require('xmldom').DOMParser;
 var router = express.Router();
 
-//saml config values
+var userFID = "12345678";
 var entity = "https://ankittrailhead-dev-ed.my.salesforce.com/";
 var issuer = "http://ankit.com";
-
-//login endpoint
-var login_url = "https://ankittrailhead-developer-edition.ap5.force.com/testcommunity/login";
-
-//saml data values
-var userFID = "12345678";
+var login_url = "https://ankittrailhead-dev-ed.my.salesforce.com";
 var oId = "00D7F000002CITw";
 var pId = "0DB7F000000CgRIWA0";
 var isComSAML = false;
 
-//local varaibles
 var base64Str = "";
 var rawStr = "";
 var data = "";
@@ -29,77 +23,8 @@ var error = "";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  getReq_Process(req, res, next);
-  
-  return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
-            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId}
-            );
-});
+  userFID = req.query.userFID || userFID;
 
-router.post('/', function(req, res, next) {
-  if(req.body.submit_action == "generate"){
-    login_url = req.body.login_url;
-    data = req.body.data;
-    error = req.body.error;
-    entity = req.body.entity;
-    issuer = req.body.issuer;
-    userFID = req.body.userFID;
-    oId = req.body.oId;
-    pId = req.body.pId;
-
-    return res.redirect('/');
-  }
-
-  var data = {
-    SAMLResponse: base64Str
-  };
-
-  var list = login_url.replace("https://" , "").split("/");
-  var baseurl = list.shift();
-  var path = list.join("/");
-  
-  const options = {
-    hostname: baseurl,
-    port: 443,
-    path: '/' + path,
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-  }
-  
-  const request = https.request(options, response => {
-    
-    console.log(`statusCode: ${response.statusCode}`);
-
-    if(response.statusCode > 300 && response.statusCode < 400){
-      //console.log("redirect URL : " + response.headers.location);
-      console.log('HEADERS: ' + JSON.stringify(response.headers));
-      return res.redirect(response.headers.location);
-    }
-
-    response.on('data', d => {
-      process.stdout.write(d);
-      data = d;
-      return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
-            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId}
-            );
-    });
-  });
-  
-  request.on('error', err => {
-    console.error(err);
-    error = err;
-    return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
-            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId}
-            );
-  });
-  
-  request.write(querystring.stringify(data));
-  request.end();
-});
-
-function getReq_Process(req, res, next){
   var dtF = new Date(new Date().getTime() + (5 * 60000));
   var dtP = new Date(new Date().getTime() - (5 * 60000));
   var reqId = new Date().getTime();
@@ -174,22 +99,7 @@ function getReq_Process(req, res, next){
 
   if(isComSAML){
     xml = xml
-      .ele('saml2:Attribute')
-        .att('Name', 'organization_id')
-        .att('NameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified')
-        .ele('saml2:AttributeValue', oId)
-          .att('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
-          .att('xsi:type', 'xs:string')
-        .up()
-      .up()
-      .ele('saml2:Attribute')
-        .att('Name', 'portal_id')
-        .att('NameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified')
-        .ele('saml2:AttributeValue' , pId)
-          .att('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
-          .att('xsi:type', 'xs:string')
-        .up()
-      .up()
+
     .up()
     .up()
     .end({ pretty: false});
@@ -237,6 +147,57 @@ function getReq_Process(req, res, next){
   var saml = sig.getSignedXml();
   rawStr = saml.toString();
   base64Str = new Buffer(rawStr).toString('base64');
-}
+  
+  
+  res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error});
+});
+
+router.post('/', function(req, res, next) {
+
+  var data = {
+    SAMLResponse: base64Str
+  };
+
+  var list = login_url.replace("https://" , "").split("/");
+  var baseurl = list.shift();
+  var path = list.join("/");
+  
+  const options = {
+    hostname: baseurl,
+    port: 443,
+    path: '/' + path,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  }
+  
+  const request = https.request(options, response => {
+    
+    console.log(`statusCode: ${response.statusCode}`);
+
+    if(response.statusCode > 300 && response.statusCode < 400){
+      //console.log("redirect URL : " + response.headers.location);
+      console.log('HEADERS: ' + JSON.stringify(response.headers));
+      res.redirect(response.headers.location);
+    }
+
+    response.on('data', d => {
+      process.stdout.write(d);
+      data = d;
+      res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error});
+    });
+  });
+  
+  request.on('error', err => {
+    console.error(err);
+    error = err;
+    res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error});
+  });
+  
+  request.write(querystring.stringify(data));
+  request.end();
+
+});
 
 module.exports = router;

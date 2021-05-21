@@ -38,11 +38,11 @@
             </tr>
             <tr>
               <td>ENTITY</td>
-              <td><input class="form-control" type="text" name="entity" value="<%= entity %>" /></td>
+              <td><input class="form-control" type="text" name="login_url" value="<%= login_url %>" /></td>
             </tr>
             <tr>
               <td>ISSUER</td>
-              <td><input class="form-control" type="text" name="issuer" value="<%= issuer %>" /></td>
+              <td><input class="form-control" type="text" name="login_url" value="<%= login_url %>" /></td>
             </tr>
             <tr>
               <td>USER FEDRATION ID</td>
@@ -67,10 +67,8 @@
           </tbody>
         </table>
         
-        <input type="hidden" value="" name="submit_action"/>
         <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-primary" onclick="document.querySelector(`input[name='submit_action']`).value='generate'">GENERATE</button>
-          <button type="submit" class="btn btn-primary" onclick="document.querySelector(`input[name='submit_action']`).value='post'">POST</button>
+          <button type="submit" class="btn btn-primary">POST</button>
         </div>
 
       </div>

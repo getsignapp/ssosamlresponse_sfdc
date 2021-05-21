@@ -31,7 +31,7 @@ var error = "";
 router.get('/', function(req, res, next) {
   getReq_Process(req, res, next);
   
-  return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
+  res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
             entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId}
             );
 });
@@ -97,6 +97,7 @@ router.post('/', function(req, res, next) {
   
   request.write(querystring.stringify(data));
   request.end();
+
 });
 
 function getReq_Process(req, res, next){

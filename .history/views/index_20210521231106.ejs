@@ -16,7 +16,7 @@
   <body>
     <form action="/" method="post" class="card p-2">
       <div class="container">
-        <table style="width:100%" class="table table-bordered">
+        <table style="width:100%" class="table">
           <thead class="table-dark">
             <tr>
               <th>Type</th>
@@ -33,28 +33,8 @@
               <td><input class="form-control" type="text" name="base64Str" value="<%= base64Str %>"/></td>
             </tr>
             <tr>
-              <td>LOGIN URL</td>
-              <td><input class="form-control" type="text" name="login_url" value="<%= login_url %>" /></td>
-            </tr>
-            <tr>
-              <td>ENTITY</td>
-              <td><input class="form-control" type="text" name="entity" value="<%= entity %>" /></td>
-            </tr>
-            <tr>
-              <td>ISSUER</td>
-              <td><input class="form-control" type="text" name="issuer" value="<%= issuer %>" /></td>
-            </tr>
-            <tr>
-              <td>USER FEDRATION ID</td>
-              <td><input class="form-control" type="text" name="userFID" value="<%= userFID %>" /></td>
-            </tr>
-            <tr>
-              <td>ORG ID</td>
-              <td><input class="form-control" type="text" name="oId" value="<%= oId %>" /></td>
-            </tr>
-            <tr>
-              <td>PORTAL ID</td>
-              <td><input class="form-control" type="text" name="pId" value="<%= pId %>" /></td>
+              <td>URL</td>
+              <td><input class="form-control" type="text" name="login_url" value="<%= login_url %>" disabled/></td>
             </tr>
             <tr>
               <td>Data</td>
@@ -67,10 +47,8 @@
           </tbody>
         </table>
         
-        <input type="hidden" value="" name="submit_action"/>
         <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-primary" onclick="document.querySelector(`input[name='submit_action']`).value='generate'">GENERATE</button>
-          <button type="submit" class="btn btn-primary" onclick="document.querySelector(`input[name='submit_action']`).value='post'">POST</button>
+          <button type="submit" class="btn btn-primary">POST</button>
         </div>
 
       </div>
