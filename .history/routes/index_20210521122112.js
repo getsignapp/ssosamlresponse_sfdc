@@ -4,20 +4,14 @@ var SignedXml = require('xml-crypto').SignedXml;
 var select = require('xml-crypto').xpath;
 var crypto = require('crypto');
 var https = require('https');
-var querystring = require('querystring');
+var axios = require('axios');
 var builder = require('xmlbuilder');
 var DOMParser = require('xmldom').DOMParser;
 var router = express.Router();
-
-var url = "ankittrailhead-dev-ed.my.salesforce.com";
 var so = "00D7F000002CITw";
-var data = {};
-var error = "";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var userFId = req.query.userFId || '12345678';
-
   var dtF = new Date(new Date().getTime() + (5 * 60000));
   var dtP = new Date(new Date().getTime() - (5 * 60000));
   var reqId = new Date().getTime();
@@ -26,7 +20,7 @@ router.get('/', function(req, res, next) {
   var xml = builder.create('saml2p:Response',{ encoding: 'utf-8' })
   .att('xmlns:saml2p', 'urn:oasis:names:tc:SAML:2.0:protocol')
   .att('xmlns:xs', 'http://www.w3.org/2001/XMLSchema')
-  .att('Destination', 'https://'+ url +'?so=' + so)
+  .att('Destination', 'https://ankittrailhead-dev-ed.my.salesforce.com?so=' + so)
   .att('ID', '_r-' + reqId)
   .att('IssueInstant', dtP.toISOString())
   .att('Version', "2.0")
@@ -42,20 +36,20 @@ router.get('/', function(req, res, next) {
     .att('Version', "2.0")
     .ele('saml2:Issuer' , 'http://ankit.com').up()
     .ele('saml2:Subject')
-      .ele('saml2:NameID', userFId)
+      .ele('saml2:NameID', '12345678')
       .att('Format', 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified').up()
       .ele('saml2:SubjectConfirmation')
       .att('Method', 'urn:oasis:names:tc:SAML:2.0:cm:bearer')
         .ele('saml2:SubjectConfirmationData')
         .att('NotOnOrAfter', dtF.toISOString())
-        .att('Recipient', 'https://'+ url +'?so=' + so).up()
+        .att('Recipient', "https://ankittrailhead-dev-ed.my.salesforce.com?so=" + so).up()
       .up()
     .up()
       .ele('saml2:Conditions')
       .att('NotBefore', dtP.toISOString())
       .att('NotOnOrAfter', dtF.toISOString())
         .ele('saml2:AudienceRestriction')
-          .ele('saml2:Audience' , 'https://'+ url + "/").up()
+          .ele('saml2:Audience' , 'https://ankittrailhead-dev-ed.my.salesforce.com/').up()
         .up()
       .up()
       .ele('saml2:AuthnStatement')
@@ -68,7 +62,7 @@ router.get('/', function(req, res, next) {
         .ele('saml2:Attribute')
         .att('Name', 'ssoStartPage')
         .att('NameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified')
-          .ele('saml2:AttributeValue' , 'http://ankit.com/sso')
+          .ele('saml2:AttributeValue' , 'http://axiomsso.herokuapp.com/RequestSamlResponse.action')
           .att('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
           .att('xsi:type', 'xs:string').up()
         .up()
@@ -120,7 +114,7 @@ router.get('/', function(req, res, next) {
   
   var saml = sig.getSignedXml();
   
-  res.render('index', { title: 'Express', msg : saml.toString(), msgbase64 : new Buffer(saml.toString()).toString('base64'), so : so , data: data , error : error});
+  res.render('index', { title: 'Express', msg : saml.toString(), msgbase64 : new Buffer(saml.toString()).toString('base64'), so : so});
 });
 
 router.post('/', function(req, res, next) {
@@ -132,12 +126,9 @@ router.post('/', function(req, res, next) {
 
   //console.log(base64Str);
 
-  //var data = 'SAMLResponse=' + base64Str; // + '&idpConfig.recipient=' + fullurl + '&RelayState='
-  var data = {
-    SAMLResponse: base64Str
-  };
+  const data = 'SAMLResponse=' + base64Str; // + '&idpConfig.recipient=' + fullurl + '&RelayState='
   
-  const options = {
+  /*const options = {
     hostname: url,
     port: 443,
     path: '/',
@@ -146,7 +137,8 @@ router.post('/', function(req, res, next) {
       'so' : so
     },
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length': data.length
     }
   }
   
@@ -155,26 +147,38 @@ router.post('/', function(req, res, next) {
     console.log(`statusCode: ${response.statusCode}`);
 
     if(response.statusCode > 300 && response.statusCode < 400){
-      //console.log("redirect URL : " + response.headers.location);
-      //console.log('HEADERS: ' + JSON.stringify(response.headers));
+      console.log("redirect URL : " + response.headers.location);
+      //console.log(response);
       res.redirect(response.headers.location);
     }
 
     response.on('data', d => {
       process.stdout.write(d);
-      data = d;
-      res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so , data: data , error : error});
+      res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so , data: data});
     });
   });
   
-  request.on('error', err => {
-    console.error(err);
-    error = err;
-    res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so , data: data , error : error});
+  request.on('error', error => {
+    console.error(error);
+    res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so ,error : error});
   });
   
-  request.write(querystring.stringify(data));
-  request.end();
+  request.write(data);
+  request.end();*/
+
+  const options = {
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+  };
+  axios.post(fullurl , {
+    SAMLResponse: base64Str
+  })
+  .then(response => {
+    console.log(`statusCode: ${response.statusCode}`)
+    //console.log(response);
+  })
+  .catch(error => {
+    console.error(error)
+  });
 
 });
 

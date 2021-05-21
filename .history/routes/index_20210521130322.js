@@ -55,7 +55,7 @@ router.get('/', function(req, res, next) {
       .att('NotBefore', dtP.toISOString())
       .att('NotOnOrAfter', dtF.toISOString())
         .ele('saml2:AudienceRestriction')
-          .ele('saml2:Audience' , 'https://'+ url + "/").up()
+          .ele('saml2:Audience' , 'https://'+ url).up()
         .up()
       .up()
       .ele('saml2:AuthnStatement')
