@@ -2,21 +2,25 @@ var express = require('express');
 var fs = require('fs');
 var SignedXml = require('xml-crypto').SignedXml;
 var select = require('xml-crypto').xpath;
-var crypto = require('crypto');
 var https = require('https');
 var querystring = require('querystring');
 var builder = require('xmlbuilder');
-var DOMParser = require('xmldom').DOMParser;
+//var DOMParser = require('xmldom').DOMParser;
 var router = express.Router();
 
+var userFID = "12345678";
 var url = "ankittrailhead-dev-ed.my.salesforce.com";
 var so = "00D7F000002CITw";
-var data = {};
+var fullurl = "";
+var data = "";
 var error = "";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var userFId = req.query.userFId || '12345678';
+  userFID = req.query.userFID || userFID;
+  url = req.query.url || url;
+  so = req.query.so || so;
+  fullurl = 'https://' + url + '/?so=' + so;
 
   var dtF = new Date(new Date().getTime() + (5 * 60000));
   var dtP = new Date(new Date().getTime() - (5 * 60000));
@@ -26,7 +30,7 @@ router.get('/', function(req, res, next) {
   var xml = builder.create('saml2p:Response',{ encoding: 'utf-8' })
   .att('xmlns:saml2p', 'urn:oasis:names:tc:SAML:2.0:protocol')
   .att('xmlns:xs', 'http://www.w3.org/2001/XMLSchema')
-  .att('Destination', 'https://'+ url +'?so=' + so)
+  .att('Destination', fullurl)
   .att('ID', '_r-' + reqId)
   .att('IssueInstant', dtP.toISOString())
   .att('Version', "2.0")
@@ -42,13 +46,13 @@ router.get('/', function(req, res, next) {
     .att('Version', "2.0")
     .ele('saml2:Issuer' , 'http://ankit.com').up()
     .ele('saml2:Subject')
-      .ele('saml2:NameID', userFId)
+      .ele('saml2:NameID', userFID)
       .att('Format', 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified').up()
       .ele('saml2:SubjectConfirmation')
       .att('Method', 'urn:oasis:names:tc:SAML:2.0:cm:bearer')
         .ele('saml2:SubjectConfirmationData')
         .att('NotOnOrAfter', dtF.toISOString())
-        .att('Recipient', 'https://'+ url +'?so=' + so).up()
+        .att('Recipient', fullurl).up()
       .up()
     .up()
       .ele('saml2:Conditions')
@@ -83,7 +87,7 @@ router.get('/', function(req, res, next) {
   .up()
   .end({ pretty: false});
 
-  var xmlDoc = new DOMParser().parseFromString(xml,"text/xml");
+  //var xmlDoc = new DOMParser().parseFromString(xml,"text/xml");
   //var message = xmlDoc.getElementsByTagName("saml2:Assertion");
   var message = xml.toString();
 
@@ -120,15 +124,16 @@ router.get('/', function(req, res, next) {
   
   var saml = sig.getSignedXml();
   
-  res.render('index', { title: 'Express', msg : saml.toString(), msgbase64 : new Buffer(saml.toString()).toString('base64'), so : so , data: data , error : error});
+  res.render('index', { title: 'Express', url : url , msg : saml.toString(), msgbase64 : new Buffer(saml.toString()).toString('base64'), so : so , data: data , error : error});
 });
 
 router.post('/', function(req, res, next) {
   var base64Str = req.body.base64;
   var raw = req.body.raw;
   var url = req.body.url;
-  var fullurl = 'https://' + url + '/?so=' + so;
+  fullurl = 'https://' + url + '/?so=' + so;
   so = req.body.so;
+  url = req.body.url;
 
   //console.log(base64Str);
 
@@ -163,14 +168,14 @@ router.post('/', function(req, res, next) {
     response.on('data', d => {
       process.stdout.write(d);
       data = d;
-      res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so , data: data , error : error});
+      res.render('index', { title: 'Express', url : url , msg : raw, msgbase64 : base64Str , so : so , data: data , error : error});
     });
   });
   
   request.on('error', err => {
     console.error(err);
     error = err;
-    res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so , data: data , error : error});
+    res.render('index', { title: 'Express', url : url , msg : raw, msgbase64 : base64Str , so : so , data: data , error : error});
   });
   
   request.write(querystring.stringify(data));
