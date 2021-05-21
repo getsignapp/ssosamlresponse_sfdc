@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <style>
+    div{
+      background-color: antiquewhite; 
+      border: solid 2px #261e13;
+      width: 99%; 
+      word-break: break-all;
+      margin: 6px;
+    }
+  </style>
+  <body>
+    <!--<h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>-->
+    <form action="/" method="post">
+      <input type="text" name="raw" value="<%= msg %>"/>
+      <input type="text" name="base64" value="<%= msgbase64 %>"/>
+      <input type="text" name="url" value="ankittrailhead-dev-ed.my.salesforce.com"/>
+      <input type="text" name="so" value="<%= so %>"/>
+      <button type="submit">POST</button></br></br>
+      RAW:<div><%= msg %></div></hr>
+      BASE64:<div><%= msgbase64 %></div>
+    </form>
+  </body>
+</html>
