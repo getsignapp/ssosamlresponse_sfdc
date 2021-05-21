@@ -14,13 +14,12 @@ router.get('/', function(req, res, next) {
   var dtF = new Date(new Date().getTime() + (5 * 60000));
   var dtP = new Date(new Date().getTime() - (5 * 60000));
   var reqId = new Date().getTime();
-  var assertionId = new Date().getTime();
   
   var xml = builder.create('saml2p:Response',{ encoding: 'utf-8' })
   .att('xmlns:saml2p', 'urn:oasis:names:tc:SAML:2.0:protocol')
   .att('xmlns:xs', 'http://www.w3.org/2001/XMLSchema')
   .att('Destination', 'https://ankittrailhead-dev-ed.my.salesforce.com?so=' + so)
-  .att('ID', '_r-' + reqId)
+  .att('ID', '_' + reqId)
   .att('IssueInstant', dtP.toISOString())
   .att('Version', "2.0")
   .ele('saml2:Issuer' , 'http://ankit.com')
@@ -30,7 +29,7 @@ router.get('/', function(req, res, next) {
   .att('Value', "urn:oasis:names:tc:SAML:2.0:status:Success").up().up()
   .ele('saml2:Assertion')
     .att('xmlns:saml2', "urn:oasis:names:tc:SAML:2.0:assertion")
-    .att('ID', '_a-' + assertionId)
+    .att('ID', '_12345-abcdef')
     .att('IssueInstant', dtP.toISOString())
     .att('Version', "2.0")
     .ele('saml2:Issuer' , 'http://ankit.com').up()
