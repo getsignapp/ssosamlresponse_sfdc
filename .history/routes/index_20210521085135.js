@@ -78,6 +78,7 @@ router.get('/', function(req, res, next) {
   //var message = xmlDoc.getElementsByTagName("saml2:Assertion");
   var message = xml.toString();
 
+  var message = fs.readFileSync('public/base.xml', 'utf-8').toString();
   message = message.replace(/TIMEGRT/g , dtF.toISOString());
   message = message.replace(/TIMESML/g , dtP.toISOString());
   message = message.replace(/>\s*/g, '>'); 

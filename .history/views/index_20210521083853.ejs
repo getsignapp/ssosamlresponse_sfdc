@@ -5,7 +5,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
   </head>
   <style>
-    .data{
+    div{
       background-color: antiquewhite; 
       border: solid 2px #261e13;
       width: 99%; 
@@ -14,7 +14,7 @@
     }
   </style>
   <body>
-    <form action="/" method="post" class="card p-2">
+    <form action="/" method="post">
       <div class="container">
         <table style="width:100%">
           <tr>
@@ -38,15 +38,9 @@
             <td><input type="text" name="so" value="<%= so %>"/></td>
           </tr>
         </table>
-        
-        <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-primary">POST</button>
-        </div>
-
-        <!--<div class="card p-2">
-          RAW:<div class="data"><%= msg %></div></hr>
-          BASE64:<div class="data"><%= msgbase64 %></div>
-        </div>-->
+        <button type="submit">POST</button></br></br>
+        RAW:<div><%= msg %></div></hr>
+        BASE64:<div><%= msgbase64 %></div>
       </div>
     </form>
   </body>

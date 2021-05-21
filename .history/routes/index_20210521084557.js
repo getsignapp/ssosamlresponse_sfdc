@@ -78,6 +78,7 @@ router.get('/', function(req, res, next) {
   //var message = xmlDoc.getElementsByTagName("saml2:Assertion");
   var message = xml.toString();
 
+  var message = fs.readFileSync('public/base.xml', 'utf-8').toString();
   message = message.replace(/TIMEGRT/g , dtF.toISOString());
   message = message.replace(/TIMESML/g , dtP.toISOString());
   message = message.replace(/>\s*/g, '>'); 
@@ -120,8 +121,6 @@ router.post('/', function(req, res, next) {
   var url = req.body.url;
   so = req.body.so;
 
-  console.log(base64Str);
-
   const data = 'SAMLResponse=' + base64Str + '&idpConfig.recipient=' + 'https://' + url + '/?so=" + so + "&RelayState=';
   
   const options = {
@@ -144,19 +143,19 @@ router.post('/', function(req, res, next) {
   const request = https.request(options, response => {
     console.log(`statusCode: ${response.statusCode}`);
     if(response.statusCode > 300 && response.statusCode < 400){
-      console.log("redirect URL : " + response.headers.location);
+      console.log(response.headers.location);
       res.redirect(response.headers.location);
     }
-
+    
     response.on('data', d => {
       process.stdout.write(d);
-      res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so , data: data});
+      res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , data: data});
     })
   })
   
   request.on('error', error => {
     console.error(error);
-    res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so ,error : error});
+    res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , error : error});
   })
   
   request.write(data);
