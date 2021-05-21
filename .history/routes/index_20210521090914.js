@@ -11,8 +11,8 @@ var so = "00D7F000002CITw";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var dtF = new Date(new Date().getTime() + (5 * 60000));
-  var dtP = new Date(new Date().getTime() - (5 * 60000));
+  var dtF = new Date(new Date().getTime() + (1 * 60000));
+  var dtP = new Date(new Date().getTime() - (1 * 60000));
   
   var xml = builder.create('saml2p:Response',{ encoding: 'utf-8' })
   .att('xmlns:saml2p', 'urn:oasis:names:tc:SAML:2.0:protocol')
@@ -21,7 +21,7 @@ router.get('/', function(req, res, next) {
   .att('ID', '_12345-67890')
   .att('IssueInstant', dtP.toISOString())
   .att('Version', "2.0")
-  .ele('saml2:Issuer' , 'http://ankit.com')
+  .ele('saml2:Issuer' , 'http://localhost:3000/')
   .att('xmlns:saml2', "urn:oasis:names:tc:SAML:2.0:assertion").up()
   .ele('saml2p:Status')
   .ele('saml2p:StatusCode')
@@ -31,7 +31,7 @@ router.get('/', function(req, res, next) {
     .att('ID', '_12345-abcdef')
     .att('IssueInstant', dtP.toISOString())
     .att('Version', "2.0")
-    .ele('saml2:Issuer' , 'http://ankit.com').up()
+    .ele('saml2:Issuer' , 'http://localhost:3000/').up()
     .ele('saml2:Subject')
       .ele('saml2:NameID', '12345678')
       .att('Format', 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified').up()
@@ -118,12 +118,11 @@ router.post('/', function(req, res, next) {
   var base64Str = req.body.base64;
   var raw = req.body.raw;
   var url = req.body.url;
-  var fullurl = 'https://' + url + '/?so=' + so;
   so = req.body.so;
 
   //console.log(base64Str);
 
-  const data = 'SAMLResponse=' + base64Str + '&RelayState='; // + '&idpConfig.recipient=' + fullurl
+  const data = 'SAMLResponse=' + base64Str;
   
   const options = {
     hostname: url,
@@ -135,30 +134,30 @@ router.post('/', function(req, res, next) {
     },
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-Length': data.length
+      'Content-Length': data.length,
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+      'Origin': 'http://localhost:3000/',
+      'Host': url
     }
   }
   
   const request = https.request(options, response => {
-    
     console.log(`statusCode: ${response.statusCode}`);
-
     if(response.statusCode > 300 && response.statusCode < 400){
       console.log("redirect URL : " + response.headers.location);
-      //console.log(response);
       res.redirect(response.headers.location);
     }
 
     response.on('data', d => {
       process.stdout.write(d);
       res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so , data: data});
-    });
-  });
+    })
+  })
   
   request.on('error', error => {
     console.error(error);
     res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so ,error : error});
-  });
+  })
   
   request.write(data);
   request.end();

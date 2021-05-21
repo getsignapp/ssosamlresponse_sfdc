@@ -152,13 +152,13 @@ router.post('/', function(req, res, next) {
     response.on('data', d => {
       process.stdout.write(d);
       res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so , data: data});
-    });
-  });
+    })
+  })
   
   request.on('error', error => {
     console.error(error);
     res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so ,error : error});
-  });
+  })
   
   request.write(data);
   request.end();

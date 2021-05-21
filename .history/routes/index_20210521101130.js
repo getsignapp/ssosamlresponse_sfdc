@@ -123,7 +123,7 @@ router.post('/', function(req, res, next) {
 
   //console.log(base64Str);
 
-  const data = 'SAMLResponse=' + base64Str + '&RelayState='; // + '&idpConfig.recipient=' + fullurl
+  const data = 'SAMLResponse=' + base64Str + '&idpConfig.recipient=' + fullurl + '&RelayState=';
   
   const options = {
     hostname: url,
@@ -140,9 +140,8 @@ router.post('/', function(req, res, next) {
   }
   
   const request = https.request(options, response => {
-    
+    console.log(request);
     console.log(`statusCode: ${response.statusCode}`);
-
     if(response.statusCode > 300 && response.statusCode < 400){
       console.log("redirect URL : " + response.headers.location);
       //console.log(response);
@@ -152,13 +151,13 @@ router.post('/', function(req, res, next) {
     response.on('data', d => {
       process.stdout.write(d);
       res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so , data: data});
-    });
-  });
+    })
+  })
   
   request.on('error', error => {
     console.error(error);
     res.render('index', { title: 'Express', msg : raw, msgbase64 : base64Str , so : so ,error : error});
-  });
+  })
   
   request.write(data);
   request.end();
