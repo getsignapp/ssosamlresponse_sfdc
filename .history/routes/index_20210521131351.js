@@ -2,25 +2,22 @@ var express = require('express');
 var fs = require('fs');
 var SignedXml = require('xml-crypto').SignedXml;
 var select = require('xml-crypto').xpath;
+var crypto = require('crypto');
 var https = require('https');
 var querystring = require('querystring');
 var builder = require('xmlbuilder');
-//var DOMParser = require('xmldom').DOMParser;
+var DOMParser = require('xmldom').DOMParser;
 var router = express.Router();
 
-var userFID = "12345678";
 var url = "ankittrailhead-dev-ed.my.salesforce.com";
 var so = "00D7F000002CITw";
-var fullurl = "";
+var fullurl = 'https://' + url + '/?so=' + so;
 var data = "";
 var error = "";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  userFID = req.query.userFID || userFID;
-  url = req.query.url || url;
-  so = req.query.so || so;
-  fullurl = 'https://' + url + '/?so=' + so;
+  var userFId = req.query.userFId || '12345678';
 
   var dtF = new Date(new Date().getTime() + (5 * 60000));
   var dtP = new Date(new Date().getTime() - (5 * 60000));
@@ -46,7 +43,7 @@ router.get('/', function(req, res, next) {
     .att('Version', "2.0")
     .ele('saml2:Issuer' , 'http://ankit.com').up()
     .ele('saml2:Subject')
-      .ele('saml2:NameID', userFID)
+      .ele('saml2:NameID', userFId)
       .att('Format', 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified').up()
       .ele('saml2:SubjectConfirmation')
       .att('Method', 'urn:oasis:names:tc:SAML:2.0:cm:bearer')
@@ -87,7 +84,7 @@ router.get('/', function(req, res, next) {
   .up()
   .end({ pretty: false});
 
-  //var xmlDoc = new DOMParser().parseFromString(xml,"text/xml");
+  var xmlDoc = new DOMParser().parseFromString(xml,"text/xml");
   //var message = xmlDoc.getElementsByTagName("saml2:Assertion");
   var message = xml.toString();
 

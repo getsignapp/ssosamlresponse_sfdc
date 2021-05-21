@@ -46,7 +46,7 @@ router.get('/', function(req, res, next) {
     .att('Version', "2.0")
     .ele('saml2:Issuer' , 'http://ankit.com').up()
     .ele('saml2:Subject')
-      .ele('saml2:NameID', userFID)
+      .ele('saml2:NameID', userFId)
       .att('Format', 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified').up()
       .ele('saml2:SubjectConfirmation')
       .att('Method', 'urn:oasis:names:tc:SAML:2.0:cm:bearer')

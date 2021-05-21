@@ -8,7 +8,6 @@ var builder = require('xmlbuilder');
 //var DOMParser = require('xmldom').DOMParser;
 var router = express.Router();
 
-var userFID = "12345678";
 var url = "ankittrailhead-dev-ed.my.salesforce.com";
 var so = "00D7F000002CITw";
 var fullurl = "";
@@ -17,10 +16,11 @@ var error = "";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  userFID = req.query.userFID || userFID;
-  url = req.query.url || url;
+  var userFId = req.query.userFId || '12345678';
+  so = req.query.so || so;
   so = req.query.so || so;
   fullurl = 'https://' + url + '/?so=' + so;
+  var userFId = req.query.userFId || '12345678';
 
   var dtF = new Date(new Date().getTime() + (5 * 60000));
   var dtP = new Date(new Date().getTime() - (5 * 60000));
@@ -46,7 +46,7 @@ router.get('/', function(req, res, next) {
     .att('Version', "2.0")
     .ele('saml2:Issuer' , 'http://ankit.com').up()
     .ele('saml2:Subject')
-      .ele('saml2:NameID', userFID)
+      .ele('saml2:NameID', userFId)
       .att('Format', 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified').up()
       .ele('saml2:SubjectConfirmation')
       .att('Method', 'urn:oasis:names:tc:SAML:2.0:cm:bearer')
