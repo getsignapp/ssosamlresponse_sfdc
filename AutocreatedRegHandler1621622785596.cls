@@ -270,7 +270,7 @@ global class AutocreatedRegHandler1621622785596 implements Auth.SamlJitHandler {
         User currentUser = 
             [SELECT LocaleSidKey, LanguageLocaleKey, TimeZoneSidKey, EmailEncodingKey FROM User WHERE Id=:uid];
         String unqUsrNamePrefix = String.valueOf(Datetime.now().getTime());
-        String alias = u.FirstName.substring(0,1) + u.LastName.substring(0,1) + unqUsrNamePrefix.substring(11,13) + communityId.substring(16,18);
+        String alias = u.FirstName.substring(0,1) + u.LastName.substring(0,1) + unqUsrNamePrefix.substring(11,13) + communityId.substring(15,18);
         
         if(create){
             u.FederationIdentifier = federationIdentifier;
