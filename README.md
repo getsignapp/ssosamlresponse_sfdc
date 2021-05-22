@@ -1,4 +1,4 @@
-##Step 1
+## Step 1
 ```sh
 npm install
 ```
@@ -6,7 +6,7 @@ npm install
 ------------
 
 
-##Step 2 
+## Step 2 
 ```sh
 npm start
 ```
@@ -14,14 +14,14 @@ npm start
 ------------
 
 
-##Step 3
+## Step 3
 ```sh
 http://localhost:3000/
 ```
 
 ------------
 
-##Before step 2 and 3, ceate a .env file in root and populate with below.
+## Before step 2 and 3, ceate a .env file in root and populate with below.
 
 - entity=https://zzz.my.salesforce.com/
 - issuer=http://zz.com
