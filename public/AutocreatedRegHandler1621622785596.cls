@@ -1,4 +1,3 @@
-//This class provides logic for inbound just-in-time provisioning of single sign-on users in your Salesforce organization.
 global class AutocreatedRegHandler1621622785596 implements Auth.SamlJitHandler {
     private class JitException extends Exception{}
     
@@ -309,6 +308,7 @@ global class AutocreatedRegHandler1621622785596 implements Auth.SamlJitHandler {
             //TODO callout to get any data here and then only do any DML to avoid error
         }
         
+        //step to create or update Account/Contact/User data and then login and redirect
         if(communityId != null || portalId != null) {
             String account = handleAccount(create, u, attributes);
             handleContact(create, account, u, attributes);
@@ -321,11 +321,6 @@ global class AutocreatedRegHandler1621622785596 implements Auth.SamlJitHandler {
     global User createUser(Id samlSsoProviderId, Id communityId, Id portalId,
         String federationIdentifier, Map<String, String> attributes, String assertion) {
         
-        system.debug('>>CR>>' + JSON.serialize(attributes));
-        system.debug('>>CR>>' + samlSsoProviderId);
-        system.debug('>>CR>>' + communityId);
-        system.debug('>>CR>>' + portalId);
-        
         User u = new User();
         handleJit(true, u, samlSsoProviderId, communityId, portalId,
             federationIdentifier, attributes, assertion);
@@ -334,9 +329,6 @@ global class AutocreatedRegHandler1621622785596 implements Auth.SamlJitHandler {
 
     global void updateUser(Id userId, Id samlSsoProviderId, Id communityId, Id portalId,
         String federationIdentifier, Map<String, String> attributes, String assertion) {
-        
-        system.debug('>>UP>>' + JSON.serialize(attributes));
-        system.debug('>>UR>>' + userId);
         
         User u = [SELECT Id, FirstName, ContactId FROM User WHERE Id=:userId];
         handleJit(false, u, samlSsoProviderId, communityId, portalId,

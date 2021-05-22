@@ -14,6 +14,7 @@ var issuer = "" + process.env.issuer ;
 
 //login endpoint
 var login_url =  "" + process.env.login_url ;
+var relay_url = "" + process.env.relay_url ;
 
 //saml data values
 var userFID = "" + process.env.userFID ;
@@ -44,7 +45,7 @@ router.get('/', function(req, res, next) {
   getReq_Process(req, res, next);
   
   return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
-            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId, isPortal : isPortal,
+            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId, isPortal : isPortal, relay_url : relay_url,
             accountname : accountname, accountnumber : accountnumber, 
             contactemail : contactemail, contactfname : contactfname, contactlname : contactlname}
             );
@@ -56,6 +57,7 @@ router.post('/', function(req, res, next) {
   
   if(req.body.submit_action == "generate"){
     login_url = req.body.login_url;
+    relay_url = req.body.relay_url;
     data = req.body.data;
     error = req.body.error;
     entity = req.body.entity;
@@ -70,6 +72,10 @@ router.post('/', function(req, res, next) {
   var data = {
     SAMLResponse: base64Str
   };
+
+  if(relay_url != ""){
+    data.RelayState = relay_url;
+  }
 
   var list = login_url.replace("https://" , "").split("/");
   var baseurl = list.shift();
@@ -117,7 +123,7 @@ router.post('/', function(req, res, next) {
       process.stdout.write(d);
       data = d;
       return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
-            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId, isPortal : isPortal,
+            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId, isPortal : isPortal, relay_url : relay_url,
             accountname : accountname, accountnumber : accountnumber, 
             contactemail : contactemail, contactfname : contactfname, contactlname : contactlname}
             );
@@ -128,7 +134,7 @@ router.post('/', function(req, res, next) {
     console.error(err);
     error = err;
     return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
-            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId, isPortal : isPortal,
+            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId, isPortal : isPortal, relay_url : relay_url,
             accountname : accountname, accountnumber : accountnumber, 
             contactemail : contactemail, contactfname : contactfname, contactlname : contactlname}
             );
@@ -265,6 +271,14 @@ function getReq_Process(req, res, next){
         .att('Name', 'Contact.LastName')
         .att('NameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified')
         .ele('saml2:AttributeValue' , contactlname)
+          .att('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
+          .att('xsi:anyType', 'xs:string')
+        .up()
+      .up()
+      .ele('saml2:Attribute')
+        .att('Name', 'Customer_Id')
+        .att('NameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified')
+        .ele('saml2:AttributeValue' , "customer_1234567")
           .att('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
           .att('xsi:anyType', 'xs:string')
         .up()

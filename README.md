@@ -27,6 +27,7 @@ http://localhost:3000/
 - entity=https://zzz.my.salesforce.com/
 - issuer=http://zz.com
 - login_url=https://zzz.force.com/testcommunity/login
+- relay_url=https://zzz.force.com/testcommunity/s/?customId=customer_1234567
 - userFID=<to be fedration id>
 - oId=<org id>
 - pId=<portal id>
