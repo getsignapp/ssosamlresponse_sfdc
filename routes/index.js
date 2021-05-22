@@ -7,7 +7,6 @@ var https = require('https');
 var httpsproxyagent = require('https-proxy-agent');
 var querystring = require('querystring');
 var builder = require('xmlbuilder');
-//var DOMParser = require('xmldom').DOMParser;
 var router = express.Router();
 
 //saml config values
