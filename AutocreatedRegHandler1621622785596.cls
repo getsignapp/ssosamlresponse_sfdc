@@ -269,10 +269,11 @@ global class AutocreatedRegHandler1621622785596 implements Auth.SamlJitHandler {
         String uid = UserInfo.getUserId();
         User currentUser = 
             [SELECT LocaleSidKey, LanguageLocaleKey, TimeZoneSidKey, EmailEncodingKey FROM User WHERE Id=:uid];
+        String unqId = String.valueOf(Datetime.now().getTime());
         
         if(create){
             u.FederationIdentifier = federationIdentifier;
-            u.Username = 'temp_' + u.Email;
+            u.Username = unqId + '_' + u.Email;
             //u.IsActive = true;
             u.ReceivesAdminInfoEmails = false;
             u.ReceivesInfoEmails = false;
@@ -313,10 +314,10 @@ global class AutocreatedRegHandler1621622785596 implements Auth.SamlJitHandler {
         String federationIdentifier, Map<String, String> attributes, String assertion) {
         
         system.debug('>>create>>' + create);
-		if(create){
-			//TODO callout to get any data here and then only do any DML to avoid error
-		}
-		
+        if(create){
+            //TODO callout to get any data here and then only do any DML to avoid error
+        }
+        
         if(communityId != null || portalId != null) {
             String account = handleAccount(create, u, attributes);
             handleContact(create, account, u, attributes);
