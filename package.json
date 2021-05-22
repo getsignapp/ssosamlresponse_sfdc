@@ -6,7 +6,6 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
-    "axios": "^0.21.1",
     "cookie-parser": "^1.4.5",
     "debug": "~2.6.9",
     "dotenv": "^10.0.0",
@@ -17,8 +16,6 @@
     "morgan": "~1.9.1",
     "querystring": "^0.2.1",
     "xml-crypto": "^2.1.2",
-    "xmlbuilder": "^15.1.1",
-    "xmldom": "^0.6.0",
-    "xpath": "0.0.32"
+    "xmlbuilder": "^15.1.1"
   }
 }
