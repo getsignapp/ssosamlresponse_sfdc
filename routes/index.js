@@ -4,6 +4,7 @@ var fs = require('fs');
 var SignedXml = require('xml-crypto').SignedXml;
 var select = require('xml-crypto').xpath;
 var https = require('https');
+var httpsproxyagent = require('https-proxy-agent');
 var querystring = require('querystring');
 var builder = require('xmlbuilder');
 //var DOMParser = require('xmldom').DOMParser;
@@ -26,6 +27,13 @@ var accountnumber = "" + process.env.accountnumber;
 var contactemail = "" + process.env.contactemail;
 var contactfname = "" + process.env.contactfname;
 var contactlname = "" + process.env.contactlname;
+
+//proxy setting
+var isProxy = false;
+var proxy_url = "";
+var proxy_port = "";
+var proxy_username = "";
+var proxy_password = "";
 
 //local varaibles
 var base64Str = "";
@@ -68,7 +76,7 @@ router.post('/', function(req, res, next) {
   var list = login_url.replace("https://" , "").split("/");
   var baseurl = list.shift();
   var path = list.join("/");
-  
+
   const options = {
     hostname: baseurl,
     port: 443,
@@ -77,6 +85,24 @@ router.post('/', function(req, res, next) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
+  }
+
+  if(isProxy){
+    var proxyServer = {
+      host : proxy_url ,
+      port : proxy_port ,
+      protocol : 'http'
+    };
+
+    if(proxy_username != "" && proxy_password != ""){
+      proxyServer.headers = {'Proxy-Authentication': 'Basic ' + new Buffer(proxy_username + ":" + proxy_password).toString('base64')};
+    }
+
+    var proxy = new httpsproxyagent(proxyServer);
+    options.agent = proxy;
+
+    console.log(proxyServer);
+    console.log(proxy);
   }
   
   const request = https.request(options, response => {
@@ -274,8 +300,7 @@ function getReq_Process(req, res, next){
 
 	      return "<" + prefix + "X509Data><" + prefix + "X509Certificate>" + publicKey + "</" + prefix + "X509Certificate></" + prefix + "X509Data>"
 	  }
-	  this.getKey = function(keyInfo) {
-	    //you can use the keyInfo parameter to extract the key in any way you want      
+	  this.getKey = function(keyInfo) {   
 	    return fs.readFileSync("public/rsa/rsa256/cert.cer");
 	  }
 	}
