@@ -2,7 +2,6 @@ require('dotenv').config();
 var express = require('express');
 var fs = require('fs');
 var SignedXml = require('xml-crypto').SignedXml;
-var select = require('xml-crypto').xpath;
 var https = require('https');
 var httpsproxyagent = require('https-proxy-agent');
 var querystring = require('querystring');
