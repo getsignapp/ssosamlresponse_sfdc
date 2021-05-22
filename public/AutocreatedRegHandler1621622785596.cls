@@ -321,6 +321,7 @@ global class AutocreatedRegHandler1621622785596 implements Auth.SamlJitHandler {
     global User createUser(Id samlSsoProviderId, Id communityId, Id portalId,
         String federationIdentifier, Map<String, String> attributes, String assertion) {
         
+        system.debug('>>Customer_Id>>' + Customer_Id);
         User u = new User();
         handleJit(true, u, samlSsoProviderId, communityId, portalId,
             federationIdentifier, attributes, assertion);
