@@ -49,10 +49,6 @@
               <td><input class="form-control" type="text" name="userFID" value="<%= userFID %>" /></td>
             </tr>
             <tr>
-              <td>IS PORTAL</td>
-              <td><input  type="checkbox" name="isPortal" value="<%= isPortal %>" <%= isPortal ? "checked" : "" %> onclick="oncheckchange();" /></td>
-            </tr>
-            <tr>
               <td>ORG ID</td>
               <td><input class="form-control" type="text" name="oId" value="<%= oId %>" /></td>
             </tr>
@@ -73,12 +69,12 @@
               <td><input class="form-control" type="text" name="contactemail" value="<%= contactemail %>" /></td>
             </tr>
             <tr>
-              <td>contactfname</td>
-              <td><input class="form-control" type="text" name="contactfname" value="<%= contactfname %>" /></td>
+              <td>PORTAL ID</td>
+              <td><input class="form-control" type="text" name="pId" value="<%= pId %>" /></td>
             </tr>
             <tr>
-              <td>contactlname</td>
-              <td><input class="form-control" type="text" name="contactlname" value="<%= contactlname %>" /></td>
+              <td>PORTAL ID</td>
+              <td><input class="form-control" type="text" name="pId" value="<%= pId %>" /></td>
             </tr>
             <tr>
               <td>Data</td>
@@ -96,20 +92,8 @@
           <button type="submit" class="btn btn-primary" onclick="document.querySelector(`input[name='submit_action']`).value='generate'">GENERATE</button>
           <button type="submit" class="btn btn-primary" onclick="document.querySelector(`input[name='submit_action']`).value='post'">POST</button>
         </div>
+
       </div>
-
-      <script>
-        function oncheckchange(){
-          var ch = document.querySelector(`input[name='isPortal']`);
-          if(ch.checked){
-            ch.value = 'true';
-          }
-          else{
-            ch.value = 'false';
-          }
-        }
-      </script>
-
     </form>
   </body>
 </html>

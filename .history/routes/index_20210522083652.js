@@ -16,15 +16,10 @@ var issuer = "http://ankit.com";
 var login_url = "https://ankittrailhead-developer-edition.ap5.force.com/testcommunity/login";
 
 //saml data values
-var userFID = "1234abcd-1";
+var userFID = "12345678";
 var oId = "00D7F000002CITw";
 var pId = "0DB7F000000CgRIWA0";
-var isPortal = 'false';
-var accountname = "JIT_TEST_ACC";
-var accountnumber = "0987654321";
-var contactemail = "er.ankit18@gmail.com";
-var contactfname = "Ankit_Community";
-var contactlname = "User";
+var isComSAML = false;
 
 //local varaibles
 var base64Str = "";
@@ -37,16 +32,11 @@ router.get('/', function(req, res, next) {
   getReq_Process(req, res, next);
   
   return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
-            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId, isPortal : isPortal,
-            accountname : accountname, accountnumber : accountnumber, 
-            contactemail : contactemail, contactfname : contactfname, contactlname : contactlname}
+            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId}
             );
 });
 
 router.post('/', function(req, res, next) {
-  isPortal = req.body.isPortal;
-  console.log(isPortal + ' >> ' + typeof isPortal);
-  
   if(req.body.submit_action == "generate"){
     login_url = req.body.login_url;
     data = req.body.data;
@@ -92,9 +82,7 @@ router.post('/', function(req, res, next) {
       process.stdout.write(d);
       data = d;
       return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
-            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId, isPortal : isPortal,
-            accountname : accountname, accountnumber : accountnumber, 
-            contactemail : contactemail, contactfname : contactfname, contactlname : contactlname}
+            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId}
             );
     });
   });
@@ -103,9 +91,7 @@ router.post('/', function(req, res, next) {
     console.error(err);
     error = err;
     return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
-            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId, isPortal : isPortal,
-            accountname : accountname, accountnumber : accountnumber, 
-            contactemail : contactemail, contactfname : contactfname, contactlname : contactlname}
+            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId}
             );
   });
   
@@ -186,7 +172,7 @@ function getReq_Process(req, res, next){
 		.up()
 	.up();
 
-  if(isPortal || isPortal == 'true'){
+  if(isComSAML){
     xml = xml
       .ele('saml2:Attribute')
         .att('Name', 'organization_id')
@@ -207,7 +193,7 @@ function getReq_Process(req, res, next){
       .ele('saml2:Attribute')
         .att('Name', 'Account.Name')
         .att('NameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified')
-        .ele('saml2:AttributeValue' , accountname)
+        .ele('saml2:AttributeValue' , 'ABC_Account')
           .att('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
           .att('xsi:anyType', 'xs:string')
         .up()
@@ -215,31 +201,7 @@ function getReq_Process(req, res, next){
       .ele('saml2:Attribute')
         .att('Name', 'Account.AccountNumber')
         .att('NameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified')
-        .ele('saml2:AttributeValue' , accountnumber)
-          .att('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
-          .att('xsi:anyType', 'xs:string')
-        .up()
-      .up()
-      .ele('saml2:Attribute')
-        .att('Name', 'Contact.Email')
-        .att('NameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified')
-        .ele('saml2:AttributeValue' , contactemail)
-          .att('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
-          .att('xsi:anyType', 'xs:string')
-        .up()
-      .up()
-      .ele('saml2:Attribute')
-        .att('Name', 'Contact.FirstName')
-        .att('NameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified')
-        .ele('saml2:AttributeValue' , contactfname)
-          .att('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
-          .att('xsi:anyType', 'xs:string')
-        .up()
-      .up()
-      .ele('saml2:Attribute')
-        .att('Name', 'Contact.LastName')
-        .att('NameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified')
-        .ele('saml2:AttributeValue' , contactlname)
+        .ele('saml2:AttributeValue' , '12345678910')
           .att('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
           .att('xsi:anyType', 'xs:string')
         .up()

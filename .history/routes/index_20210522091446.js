@@ -46,6 +46,7 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
   isPortal = req.body.isPortal;
   console.log(isPortal + ' >> ' + typeof isPortal);
+  return;
   
   if(req.body.submit_action == "generate"){
     login_url = req.body.login_url;

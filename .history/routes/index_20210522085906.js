@@ -19,7 +19,7 @@ var login_url = "https://ankittrailhead-developer-edition.ap5.force.com/testcomm
 var userFID = "1234abcd-1";
 var oId = "00D7F000002CITw";
 var pId = "0DB7F000000CgRIWA0";
-var isPortal = 'false';
+var isPortal = false;
 var accountname = "JIT_TEST_ACC";
 var accountnumber = "0987654321";
 var contactemail = "er.ankit18@gmail.com";
@@ -44,9 +44,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-  isPortal = req.body.isPortal;
-  console.log(isPortal + ' >> ' + typeof isPortal);
-  
   if(req.body.submit_action == "generate"){
     login_url = req.body.login_url;
     data = req.body.data;
@@ -186,7 +183,7 @@ function getReq_Process(req, res, next){
 		.up()
 	.up();
 
-  if(isPortal || isPortal == 'true'){
+  if(isPortal){
     xml = xml
       .ele('saml2:Attribute')
         .att('Name', 'organization_id')

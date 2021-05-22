@@ -50,7 +50,7 @@
             </tr>
             <tr>
               <td>IS PORTAL</td>
-              <td><input  type="checkbox" name="isPortal" value="<%= isPortal %>" <%= isPortal ? "checked" : "" %> onclick="oncheckchange();" /></td>
+              <td><input  type="checkbox" name="isPortal" value="<%= isPortal %>" <%= isPortal ? "checked" : "" %> onchange="oncheckchange();" /></td>
             </tr>
             <tr>
               <td>ORG ID</td>
@@ -96,20 +96,8 @@
           <button type="submit" class="btn btn-primary" onclick="document.querySelector(`input[name='submit_action']`).value='generate'">GENERATE</button>
           <button type="submit" class="btn btn-primary" onclick="document.querySelector(`input[name='submit_action']`).value='post'">POST</button>
         </div>
+
       </div>
-
-      <script>
-        function oncheckchange(){
-          var ch = document.querySelector(`input[name='isPortal']`);
-          if(ch.checked){
-            ch.value = 'true';
-          }
-          else{
-            ch.value = 'false';
-          }
-        }
-      </script>
-
     </form>
   </body>
 </html>

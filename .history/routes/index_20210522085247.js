@@ -19,7 +19,7 @@ var login_url = "https://ankittrailhead-developer-edition.ap5.force.com/testcomm
 var userFID = "1234abcd-1";
 var oId = "00D7F000002CITw";
 var pId = "0DB7F000000CgRIWA0";
-var isPortal = 'false';
+var isComSAML = false;
 var accountname = "JIT_TEST_ACC";
 var accountnumber = "0987654321";
 var contactemail = "er.ankit18@gmail.com";
@@ -37,16 +37,13 @@ router.get('/', function(req, res, next) {
   getReq_Process(req, res, next);
   
   return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
-            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId, isPortal : isPortal,
+            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId,
             accountname : accountname, accountnumber : accountnumber, 
             contactemail : contactemail, contactfname : contactfname, contactlname : contactlname}
             );
 });
 
 router.post('/', function(req, res, next) {
-  isPortal = req.body.isPortal;
-  console.log(isPortal + ' >> ' + typeof isPortal);
-  
   if(req.body.submit_action == "generate"){
     login_url = req.body.login_url;
     data = req.body.data;
@@ -92,7 +89,7 @@ router.post('/', function(req, res, next) {
       process.stdout.write(d);
       data = d;
       return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
-            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId, isPortal : isPortal,
+            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId,
             accountname : accountname, accountnumber : accountnumber, 
             contactemail : contactemail, contactfname : contactfname, contactlname : contactlname}
             );
@@ -103,7 +100,7 @@ router.post('/', function(req, res, next) {
     console.error(err);
     error = err;
     return res.render('index', { title: '', rawStr : rawStr, base64Str : base64Str , login_url : login_url , data: data , error : error, 
-            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId, isPortal : isPortal,
+            entity : entity, issuer : issuer, userFID : userFID, oId : oId, pId : pId,
             accountname : accountname, accountnumber : accountnumber, 
             contactemail : contactemail, contactfname : contactfname, contactlname : contactlname}
             );
@@ -186,7 +183,7 @@ function getReq_Process(req, res, next){
 		.up()
 	.up();
 
-  if(isPortal || isPortal == 'true'){
+  if(isComSAML){
     xml = xml
       .ele('saml2:Attribute')
         .att('Name', 'organization_id')

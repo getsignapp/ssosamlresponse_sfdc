@@ -44,9 +44,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-  isPortal = req.body.isPortal;
-  console.log(isPortal + ' >> ' + typeof isPortal);
-  
   if(req.body.submit_action == "generate"){
     login_url = req.body.login_url;
     data = req.body.data;
@@ -186,7 +183,7 @@ function getReq_Process(req, res, next){
 		.up()
 	.up();
 
-  if(isPortal || isPortal == 'true'){
+  if(isPortal){
     xml = xml
       .ele('saml2:Attribute')
         .att('Name', 'organization_id')
