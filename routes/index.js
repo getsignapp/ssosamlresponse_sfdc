@@ -308,18 +308,18 @@ function getReq_Process(req, res, next){
         prefix = prefix || '';
         prefix = prefix ? prefix + ':' : prefix;
         
-        var publicKey = fs.readFileSync("public/rsa/rsa256/cert.cer", "utf8").replace("-----BEGIN CERTIFICATE-----", "").replace("-----END CERTIFICATE-----", "").trim();;
+        var publicKey = fs.readFileSync("public/rsa/cert.cer", "utf8").replace("-----BEGIN CERTIFICATE-----", "").replace("-----END CERTIFICATE-----", "").trim();;
 
 	      return "<" + prefix + "X509Data><" + prefix + "X509Certificate>" + publicKey + "</" + prefix + "X509Certificate></" + prefix + "X509Data>"
 	  }
 	  this.getKey = function(keyInfo) {   
-	    return fs.readFileSync("public/rsa/rsa256/cert.cer");
+	    return fs.readFileSync("public/rsa/cert.cer");
 	  }
 	}
 
   var sig = new SignedXml();
   sig.addReference("//*[local-name(.)='Response']", ["http://www.w3.org/2000/09/xmldsig#enveloped-signature", "http://www.w3.org/2001/10/xml-exc-c14n#"], ["http://www.w3.org/2000/09/xmldsig#sha1"]);
-  sig.signingKey = fs.readFileSync("public/rsa/rsa256/privkey.pem");
+  sig.signingKey = fs.readFileSync("public/rsa/privkey.pem");
   sig.keyInfoProvider = new MyKeyInfo();
   sig.canonicalizationAlgorithm = "http://www.w3.org/2001/10/xml-exc-c14n#";
   

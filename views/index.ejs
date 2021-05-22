@@ -12,6 +12,11 @@
       word-break: break-all;
       margin: 6px;
     }
+
+    .chk-lg{
+      width: 1.55rem;
+      height: 1.55rem;
+    }
   </style>
   <body>
     <form action="/" method="post" class="card p-2">
@@ -19,11 +24,15 @@
         <table style="width:100%" class="table table-bordered">
           <thead class="table-dark">
             <tr>
-              <th>Type</th>
+              <th style="width: 25%;">Type</th>
               <th>Value</th>
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td>DOWNLOADS</td>
+              <td><a href="/rsa/cert.cer" download>Public Certificate</a></td>
+            </tr>
             <tr>
               <td>RAW</td>
               <td><input class="form-control" type="text" name="rawStr" value="<%= rawStr %>"/></td>
@@ -54,7 +63,7 @@
             </tr>
             <tr>
               <td>IS PORTAL</td>
-              <td><input  type="checkbox" name="isPortal" value="<%= isPortal %>" <%= isPortal ? "checked" : "" %> onclick="oncheckchange();" /></td>
+              <td><input class="form-check-input chk-lg" type="checkbox" name="isPortal" value="<%= isPortal %>" <%= isPortal ? "checked" : "" %> onclick="oncheckchange();" /></td>
             </tr>
             <tr>
               <td>ORG ID</td>
@@ -96,8 +105,8 @@
         </table>
         
         <input type="hidden" value="" name="submit_action"/>
-        <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-primary" onclick="document.querySelector(`input[name='submit_action']`).value='generate'">GENERATE</button>
+        <div class="d-grid gap-4">
+          <button type="submit" class="btn btn-secondary" onclick="document.querySelector(`input[name='submit_action']`).value='generate'">GENERATE</button>
           <button type="submit" name="postcall" class="btn btn-primary" onclick="document.querySelector(`input[name='submit_action']`).value='post'">POST</button>
         </div>
       </div>
