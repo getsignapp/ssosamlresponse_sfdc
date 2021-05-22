@@ -1,3 +1,4 @@
+require('dotenv').config();
 var express = require('express');
 var fs = require('fs');
 var SignedXml = require('xml-crypto').SignedXml;
@@ -9,22 +10,22 @@ var builder = require('xmlbuilder');
 var router = express.Router();
 
 //saml config values
-var entity = "https://ankittrailhead-dev-ed.my.salesforce.com/";
-var issuer = "http://ankit.com";
+var entity = "" + process.env.entity ;
+var issuer = "" + process.env.issuer ;
 
 //login endpoint
-var login_url = "https://ankittrailhead-developer-edition.ap5.force.com/testcommunity/login";
+var login_url =  "" + process.env.login_url ;
 
 //saml data values
-var userFID = "1234abcd-1";
-var oId = "00D7F000002CITw";
-var pId = "0DB7F000000CgRIWA0";
-var isPortal = 'false';
-var accountname = "JIT_TEST_ACC";
-var accountnumber = "0987654321";
-var contactemail = "er.ankit18@gmail.com";
-var contactfname = "Ankit_Community";
-var contactlname = "User";
+var userFID = "" + process.env.userFID ;
+var oId = "" + process.env.oId ;
+var pId = "" + process.env.pId ;
+var isPortal = "" + process.env.isPortal;
+var accountname = "" + process.env.accountname;
+var accountnumber = "" + process.env.accountnumber;
+var contactemail = "" + process.env.contactemail;
+var contactfname = "" + process.env.contactfname;
+var contactlname = "" + process.env.contactlname;
 
 //local varaibles
 var base64Str = "";
