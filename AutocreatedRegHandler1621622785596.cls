@@ -224,7 +224,7 @@ global class AutocreatedRegHandler1621622785596 implements Auth.SamlJitHandler {
     }
     
     private void handleUser(boolean create, User u, Map<String, String> attributes,
-        String federationIdentifier, boolean isStandard) {
+        String federationIdentifier, boolean isStandard, String communityId) {
                 
         if(attributes.containsKey('Contact.Phone')) {
             u.Phone = attributes.get('Contact.Phone');
@@ -269,11 +269,12 @@ global class AutocreatedRegHandler1621622785596 implements Auth.SamlJitHandler {
         String uid = UserInfo.getUserId();
         User currentUser = 
             [SELECT LocaleSidKey, LanguageLocaleKey, TimeZoneSidKey, EmailEncodingKey FROM User WHERE Id=:uid];
-        String unqId = String.valueOf(Datetime.now().getTime());
+        String unqUsrNamePrefix = String.valueOf(Datetime.now().getTime());
+        String alias = u.FirstName.substring(0,1) + u.LastName.substring(0,1) + unqUsrNamePrefix.substring(11,13) + communityId.substring(16,18);
         
         if(create){
             u.FederationIdentifier = federationIdentifier;
-            u.Username = unqId + '_' + u.Email;
+            u.Username = unqUsrNamePrefix + '_' + u.Email;
             //u.IsActive = true;
             u.ReceivesAdminInfoEmails = false;
             u.ReceivesInfoEmails = false;
@@ -281,16 +282,6 @@ global class AutocreatedRegHandler1621622785596 implements Auth.SamlJitHandler {
             u.LanguageLocaleKey = currentUser.LanguageLocaleKey;
             u.TimeZoneSidKey = currentUser.TimeZoneSidKey;
             u.EmailEncodingKey = currentUser.EmailEncodingKey;
-            
-            String alias = '';
-            if(u.FirstName == null) {
-                alias = u.LastName;
-            } else {
-                alias = u.FirstName.charAt(0) + u.LastName;
-            }
-            if(alias.length() > 5) {
-                alias = alias.substring(0, 5);
-            }
             u.Alias = alias;
             u.CommunityNickname = alias;
             
@@ -321,9 +312,9 @@ global class AutocreatedRegHandler1621622785596 implements Auth.SamlJitHandler {
         if(communityId != null || portalId != null) {
             String account = handleAccount(create, u, attributes);
             handleContact(create, account, u, attributes);
-            handleUser(create, u, attributes, federationIdentifier, false);
+            handleUser(create, u, attributes, federationIdentifier, false, communityId);
         } else {
-            //handleUser(create, u, attributes, federationIdentifier, true);
+            //handleUser(create, u, attributes, federationIdentifier, true, '');
         }
     }
 
