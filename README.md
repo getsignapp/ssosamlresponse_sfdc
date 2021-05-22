@@ -23,6 +23,7 @@ http://localhost:3000/
 
 ## Before step 2 and 3, ceate a .env file in root and populate with below.
 
+- PORT=3000
 - entity=https://zzz.my.salesforce.com/
 - issuer=http://zz.com
 - login_url=https://zzz.force.com/testcommunity/login
