@@ -26,6 +26,7 @@ var accountnumber = "" + process.env.accountnumber;
 var contactemail = "" + process.env.contactemail;
 var contactfname = "" + process.env.contactfname;
 var contactlname = "" + process.env.contactlname;
+var Custom_Id = 'local_value';
 
 //proxy setting
 var isProxy = false;
@@ -66,6 +67,12 @@ router.post('/', function(req, res, next) {
     oId = req.body.oId;
     pId = req.body.pId;
 
+    accountname = req.body.accountname;
+    accountnumber = req.body.accountnumber;
+    contactemail = req.body.contactemail;
+    contactfname = req.body.contactfname;
+    contactlname = req.body.contactlname;
+
     return res.redirect('/');
   }
 
@@ -92,21 +99,15 @@ router.post('/', function(req, res, next) {
   }
 
   if(isProxy){
-    var proxyServer = {
-      host : proxy_url ,
-      port : proxy_port ,
-      protocol : 'http'
-    };
-
     if(proxy_username != "" && proxy_password != ""){
-      proxyServer.headers = {'Proxy-Authentication': 'Basic ' + new Buffer(proxy_username + ":" + proxy_password).toString('base64')};
+      proxyOptions = 'http://' + proxy_username + ":" + proxy_password + '@' + proxy_url + ':' + proxy_port;
+    }
+    else{
+      proxyOptions = 'http://' + proxy_url + ':' + proxy_port;
     }
 
-    var proxy = new httpsproxyagent(proxyServer);
+    var proxy = new httpsproxyagent(proxyOptions);
     options.agent = proxy;
-
-    console.log(proxyServer);
-    console.log(proxy);
   }
   
   const request = https.request(options, response => {
@@ -153,7 +154,7 @@ function getReq_Process(req, res, next){
   var xml = builder.create('saml2p:Response',{ encoding: 'utf-8' })
 	.att('xmlns:saml2p', 'urn:oasis:names:tc:SAML:2.0:protocol')
 	.att('xmlns:xs', 'http://www.w3.org/2001/XMLSchema')
-	.att('Destination', entity)
+	.att('Destination', login_url)
 	.att('ID', '_r-' + reqId)
 	.att('IssueInstant', dtP.toISOString())
 	.att('Version', "2.0")
@@ -180,7 +181,7 @@ function getReq_Process(req, res, next){
 			.att('Method', 'urn:oasis:names:tc:SAML:2.0:cm:bearer')
 			.ele('saml2:SubjectConfirmationData')
 				.att('NotOnOrAfter', dtF.toISOString())
-				.att('Recipient', entity)
+				.att('Recipient', login_url)
 			.up()
 		.up()
 	.up()
@@ -276,9 +277,9 @@ function getReq_Process(req, res, next){
         .up()
       .up()
       .ele('saml2:Attribute')
-        .att('Name', 'Customer_Id')
+        .att('Name', 'Custom_Id')
         .att('NameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified')
-        .ele('saml2:AttributeValue' , "customer_1234567")
+        .ele('saml2:AttributeValue' , Custom_Id)
           .att('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
           .att('xsi:anyType', 'xs:string')
         .up()
